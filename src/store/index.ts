@@ -1,11 +1,28 @@
-import Vue from 'vue';
+import Vue, {PluginObject} from 'vue';
 import Vuex, {ActionContext, Store} from 'vuex';
 
 interface State {
   todos: string[]
 }
 
+declare module "vue/types/vue" {
+  interface Vue {
+    $vStore: Store<State>;
+  }
+}
+
+const typedStorePlugin: PluginObject<void> = {
+  install(VueInstance: typeof Vue) {
+    Object.defineProperty(VueInstance.prototype, '$vStore', {
+        get() {
+          return this.$store;
+        }
+    });
+  }
+};
+
 Vue.use(Vuex);
+Vue.use(typedStorePlugin);
 
 export default new Store<State>({
   state: {

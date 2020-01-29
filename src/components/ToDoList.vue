@@ -13,18 +13,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 
 @Component
 export default class ToDoList extends Vue {
   input: string = '';
 
   get todos(): string[] {
-    return this.$store.state.todos;
+    return this.$vStore.state.todos;
   }
 
   get todosCount(): number {
-    return this.$store.getters.todosCount;
+    return this.$vStore.getters.todosCount;
   }
 
   addToDo() {

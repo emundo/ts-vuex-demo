@@ -5,9 +5,21 @@ interface State {
   todos: string[]
 }
 
+interface Getters {
+  todosCount: number;
+}
+
+type GettersDefinition = {
+  [P in keyof Getters]: (state: State, getters: Getters) => Getters[P];
+}
+
+interface MyStore extends Store<State> {
+  getters: Getters;
+}
+
 declare module "vue/types/vue" {
   interface Vue {
-    $vStore: Store<State>;
+    $vStore: MyStore;
   }
 }
 
@@ -24,13 +36,15 @@ const typedStorePlugin: PluginObject<void> = {
 Vue.use(Vuex);
 Vue.use(typedStorePlugin);
 
+const getters: GettersDefinition = {
+  todosCount: state => state.todos.length
+};
+
 export default new Store<State>({
   state: {
     todos: []
   },
-  getters: {
-    todosCount: state => state.todos.length
-  },
+  getters: getters,
   mutations: {
     ADD_TODO: (state: State, payload: string) => state.todos.push(payload)
   },

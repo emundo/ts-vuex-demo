@@ -1,15 +1,23 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex, {ActionContext, Store} from 'vuex';
 
-Vue.use(Vuex)
+interface State {
+  todos: string[]
+}
 
-export default new Vuex.Store({
+Vue.use(Vuex);
+
+export default new Store<State>({
   state: {
+    todos: []
+  },
+  getters: {
+    todosCount: state => state.todos.length
   },
   mutations: {
+    ADD_TODO: (state: State, payload: string) => state.todos.push(payload)
   },
   actions: {
-  },
-  modules: {
+    ADD_TODO: (injectee: ActionContext<State, State>, payload: string) => injectee.commit("ADD_TODO", payload)
   }
-})
+});

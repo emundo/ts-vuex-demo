@@ -13,7 +13,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import {Component, Vue} from 'vue-property-decorator';
+import {Actions} from "@/store";
 
 @Component
 export default class ToDoList extends Vue {
@@ -28,13 +29,12 @@ export default class ToDoList extends Vue {
   }
 
   addToDo() {
-    this.$store.dispatch('ADD_TODO', this.input);
+    this.$vStore.dispatch(Actions.AddTodo, this.input);
     this.input = '';
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 $backgroundColor: lighten(#42b983, 40%);
 

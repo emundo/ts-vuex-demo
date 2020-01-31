@@ -14,7 +14,6 @@
 
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
-import {Actions} from "@/store";
 
 @Component
 export default class ToDoList extends Vue {
@@ -29,7 +28,7 @@ export default class ToDoList extends Vue {
   }
 
   addToDo() {
-    this.$vStore.dispatch(Actions.AddTodo, this.input);
+    this.$vStore.actions.addTodo(this.input);
     this.input = '';
   }
 }

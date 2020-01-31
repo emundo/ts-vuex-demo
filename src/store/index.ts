@@ -30,27 +30,25 @@ export interface MyCommit {
   <P extends BaseMutationPayloadWithType>(payloadWithType: P, options?: CommitOptions): void;
 }
 
-export enum Actions {
-  AddTodo="ADD_TODO"
+class ActionFacade {
+  constructor(private readonly store: MyStore) {
+  }
+  addTodo(todo: string) {
+    return this.store.dispatch('addTodo', todo);
+  }
+
 }
+
+type PayloadType<T> = T extends (payload: infer U) => any ? U : never;
 
 type ActionsDefinition = {
-  [P in Actions]: Action<State, State>;
-}
-
-interface BaseActionPayloadWithType {
-  type: Actions;
-}
-
-export interface MyDispatch {
-  (type: Actions, payload?: any, options?: DispatchOptions): Promise<any>;
-  <P extends BaseActionPayloadWithType>(payloadWithType: P, options?: DispatchOptions): Promise<any>;
+  [P in keyof ActionFacade]: (this: Store<State>, injectee: ActionContext<State, State>, payload: PayloadType<ActionFacade[P]>) => Promise<void> | void;
 }
 
 interface MyStore extends Store<State> {
   getters: Getters;
   commit: MyCommit;
-  dispatch: MyDispatch;
+  actions: ActionFacade;
 }
 
 declare module "vue/types/vue" {
@@ -81,14 +79,17 @@ const mutations: MutationsDefinition = {
 };
 
 const actions: ActionsDefinition = {
-  [Actions.AddTodo]: (injectee: ActionContext<State, State>, payload: string) => injectee.commit("ADD_TODO", payload)
+  addTodo: (injectee: ActionContext<State, State>, payload: string) => injectee.commit("ADD_TODO", payload)
 };
 
-export default new Store<State>({
+const store = new Store<State>({
   state: {
     todos: []
   },
   getters: getters,
   mutations: mutations,
   actions: actions
-});
+}) as MyStore;
+store.actions = new ActionFacade(store);
+
+export default store;
